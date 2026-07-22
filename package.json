@@ -3,22 +3,28 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "private": true,
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "tsx --watch src/index.js",
-    "build": "tsc",
-    "format": "prettier . --write",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "cross-env NODE_ENV=prod node dist/index.js",
+    "dev": "cross-env NODE_ENV=dev tsx --watch src/index.js",
+    "test": "cross-env NODE_ENV=test tsx --test",
+    "build": "tsc -p tsconfig.build.json",
+    "format": "prettier . --write"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.18.3",
   "dependencies": {
-    "express": "^5.2.1"
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "morgan": "^1.11.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
+    "@types/morgan": "^1.9.10",
     "@types/node": "^26.1.1",
     "prettier": "^3.9.6",
     "tsx": "^4.23.1",
