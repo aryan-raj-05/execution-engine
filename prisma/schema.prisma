@@ -19,6 +19,19 @@ enum Language {
   PYTHON
 }
 
+enum JobStatus {
+  QUEUED
+  RUNNING
+  FINISHED
+}
+
+enum ExecutionResult {
+  RUNNING
+  SUCCESS
+  RUNTIME_ERROR
+  COMPILATION_ERROR
+}
+
 model User {
   id              Int @id @default(autoincrement())
   name            String @unique
@@ -33,13 +46,14 @@ model CodexJob {
 
   language        Language
   sourceCode      String
-  stdin           String
+  stdin           String?
+  status          JobStatus @default(QUEUED)
 
-  executionResult String // change to enum
-  stdout          String
-  stderr          String
-  exitCode        Int
+  executionResult ExecutionResult?
+  stdout          String?
+  stderr          String?
+  exitCode        Int?
 
   submittedBy     Int
-  submission      User @relation(fields: [submittedBy], references: [id])
+  user            User @relation(fields: [submittedBy], references: [id])
 }
