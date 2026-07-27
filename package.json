@@ -5,8 +5,8 @@
   "main": "index.js",
   "private": true,
   "scripts": {
+    "dev:api": "cross-env NODE_ENV=dev tsx --watch src/api/index.js",
     "start": "cross-env NODE_ENV=prod node dist/index.js",
-    "dev": "cross-env NODE_ENV=dev tsx --watch src/index.js",
     "test": "cross-env NODE_ENV=test tsx --test",
     "build": "tsc -p tsconfig.build.json",
     "format": "prettier . --write"
@@ -24,6 +24,7 @@
     "cross-env": "^10.1.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "morgan": "^1.11.0",
     "pg": "^8.22.0",
     "zod": "^4.4.3"
@@ -31,6 +32,7 @@
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "@types/node": "^26.1.1",
     "@types/pg": "^8.20.0",
