@@ -1,9 +1,11 @@
 import express from "express";
 import morgan from "morgan";
-import type { Express, Request, Response } from "express";
+import type { Express } from "express";
 
-import { userRouter } from "./features/users/users.routes.js";
 import { config } from "./utils/config.js";
+import { authRouter } from "./features/auth/auth.route.js";
+import { codexRouter } from "./features/codex/codex.route.js";
+import { errorHandler } from "./middlewares/error.js";
 
 export const app: Express = express();
 
@@ -12,8 +14,11 @@ if (config.NODE_ENV !== "test") {
   app.use(morgan("combined"));
 }
 
-app.use(userRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/exec", codexRouter);
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("hello world");
+app.use((req, res) => {
+  res.status(404).json({ error: "Route not found" });
 });
+
+app.use(errorHandler);
