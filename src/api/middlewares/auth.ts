@@ -22,6 +22,6 @@ export const authenticateUser: RequestHandler = (req, res, next) => {
       .json({ message: "Invalid or expired token. Sign-in again." });
   }
 
-  req.user = decoded.userId;
+  req.user = decoded;
   next();
 };
