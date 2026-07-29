@@ -14,6 +14,10 @@ if (config.NODE_ENV !== "test") {
   app.use(morgan("combined"));
 }
 
+app.get("/ping", (req, res) => {
+  res.send("PONG");
+});
+
 app.use("/api/auth", authRouter);
 app.use("/api/exec", codexRouter);
 
