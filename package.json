@@ -5,17 +5,17 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "dev:api": "cross-env NODE_ENV=dev tsx --watch src/api/index.js",
-    "start": "cross-env NODE_ENV=prod node dist/index.js",
+    "start": "cross-env NODE_ENV=prod node dist/api/index.js",
+    "dev:api": "cross-env NODE_ENV=dev tsx --watch src/api/index.ts",
+    "dev:codex": "cross-env NODE_ENV=dev tsx --watch src/codex-engine-worker/index.ts",
     "test": "cross-env NODE_ENV=test tsx --test",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc",
     "format": "prettier . --write"
   },
   "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.18.3",
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.0",
     "@prisma/client": "^7.9.0",
