@@ -7,6 +7,9 @@ services:
       - "3001:3001"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - shared-jobs:/jobs
     depends_on:
       postgres:
         condition: service_healthy
@@ -32,3 +35,4 @@ services:
 
 volumes:
   postgres_data:
+  shared-jobs:
