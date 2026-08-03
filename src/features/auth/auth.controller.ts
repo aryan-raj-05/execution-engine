@@ -1,6 +1,6 @@
 import type { RequestHandler } from "express";
 
-import { prisma } from "../../../db/prisma.js";
+import { prisma } from "../../utils/prisma.js";
 import { comparePassword, hashPassword } from "../../utils/passwords.js";
 import { generateToken } from "../../utils/token.js";
 import type { CreateUser, LoginUser } from "./auth.types.js";
