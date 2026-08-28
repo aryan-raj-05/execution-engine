@@ -2,11 +2,10 @@ import z from "zod";
 import type { RequestHandler } from "express";
 
 export const validateBody =
-  <T extends z.ZodObject<any>>(
-    schema: T,
-  ): RequestHandler<any, {}, z.infer<T>> =>
+  <T extends z.ZodType>(schema: T): RequestHandler<{}, {}, z.infer<T>> =>
   (req, res, next) => {
     const result = schema.safeParse(req.body);
+
     if (!result.success) {
       return res.status(400).json({
         error: "Invalid body",
@@ -19,9 +18,10 @@ export const validateBody =
   };
 
 export const validateParams =
-  <T extends z.ZodObject<any>>(schema: T): RequestHandler<z.infer<T>> =>
+  <T extends z.ZodType>(schema: T): RequestHandler<z.infer<T>> =>
   (req, res, next) => {
     const result = schema.safeParse(req.params);
+
     if (!result.success) {
       return res.status(400).json({
         error: "Invalid params",
