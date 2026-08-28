@@ -5,12 +5,10 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "start:api": "cross-env NODE_ENV=prod node dist/api/index.js",
-    "start:codex": "tsx src/codex/codex.ts",
-    "dev:api": "cross-env NODE_ENV=dev tsx --watch src/api/index.ts",
-    "dev:codex": "cross-env NODE_ENV=dev tsx --watch src/codex/index.ts",
-    "test": "cross-env NODE_ENV=test tsx --test",
+    "start": "cross-env NODE_ENV=prod node dist/index.js",
+    "dev": "cross-env NODE_ENV=dev tsx --watch src/index.ts",
     "build": "tsc",
+    "test": "cross-env NODE_ENV=test tsx --test",
     "format": "prettier . --write"
   },
   "type": "module",
@@ -25,6 +23,7 @@
     "cross-env": "^10.1.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "ioredis": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.11.0",
     "pg": "^8.22.0",
