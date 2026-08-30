@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 
 import { prisma } from "../../utils/prisma.js";
-import { codexJobQueue } from "../../queues/codex.queue.js";
+import { codexJobQueue } from "../../queue/codex/codex.queue.js";
 import type { CodexJob } from "./codex.types.js";
 
 export const queueCodeExJob: RequestHandler<{}, any, CodexJob> = async (
