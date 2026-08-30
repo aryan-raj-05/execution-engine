@@ -1,29 +1,44 @@
 import { Worker } from "bullmq";
-import { exec, spawn } from "node:child_process";
-import path from "node:path";
+import { prisma } from "../../utils/prisma.js";
+import { executeJob } from "./docker.js";
+import type { CodexJob } from "../../generated/prisma/client.js";
 
-const executeDev = () => {
-  const fileName = "abc.js";
-  const hostFile = path.resolve("jobs", fileName);
-
-  const child = spawn("docker", [
-    "run",
-    "--rm",
-    "-v",
-    `${hostFile}:/node_workspace/${fileName}:ro`,
-    "runner-node:1.0",
-    "node",
-    `/node_workspace/${fileName}`,
-  ]);
-
-  child.stdout.on("data", (d) => process.stdout.write(d));
-  child.stderr.on("data", (d) => process.stderr.write(d));
+export type executionResult = {
+  stdout?: string;
+  stderr?: string;
+  exitCode: number | null;
 };
+
+async function getJob(jobId: number): Promise<CodexJob> {
+  const job = await prisma.codexJob.findUnique({ where: { id: jobId } });
+
+  if (!job) {
+    throw Error("Job doesn't exist in Database");
+  }
+
+  return job;
+}
+
+async function updateDatabase(
+  jobId: number,
+  postExec: executionResult,
+): Promise<void> {
+  await prisma.codexJob.update({
+    where: { id: jobId },
+    data: postExec,
+  });
+}
 
 const worker = new Worker(
   "codex",
   async (job) => {
     console.log(`Processing job ${job.id}`);
+
+    if (!job.id) return;
+
+    const codexJob = await getJob(Number(job.id));
+    const result = await executeJob(codexJob);
+    await updateDatabase(codexJob.id, result);
   },
   {
     connection: {
