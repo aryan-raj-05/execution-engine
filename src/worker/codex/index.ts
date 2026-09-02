@@ -1,6 +1,7 @@
 import { Worker } from "bullmq";
-import { prisma } from "../../utils/prisma.js";
 import { executeJob } from "./docker.js";
+import { prisma } from "../../utils/prisma.js";
+import { JobStatus, ExecutionResult } from "../../generated/prisma/enums.js";
 import type { CodexJob } from "../../generated/prisma/client.js";
 
 export type executionResult = {
@@ -23,13 +24,26 @@ async function updateDatabase(
   jobId: number,
   postExec: executionResult,
 ): Promise<void> {
+  const executionStatus =
+    postExec.exitCode === 0
+      ? ExecutionResult.SUCCESS
+      : postExec.stderr?.toLowerCase().includes("error")
+        ? ExecutionResult.COMPILATION_ERROR
+        : ExecutionResult.RUNTIME_ERROR;
+
   await prisma.codexJob.update({
     where: { id: jobId },
-    data: postExec,
+    data: {
+      status: JobStatus.FINISHED,
+      executionResult: executionStatus,
+      stdout: postExec.stdout ?? null,
+      stderr: postExec.stderr ?? null,
+      exitCode: postExec.exitCode ?? null,
+    },
   });
 }
 
-const worker = new Worker(
+export const worker = new Worker(
   "codex",
   async (job) => {
     console.log(`Processing job ${job.id}`);
@@ -37,13 +51,29 @@ const worker = new Worker(
     if (!job.id) return;
 
     const codexJob = await getJob(Number(job.id));
+
+    await prisma.codexJob.update({
+      where: { id: codexJob.id },
+      data: {
+        status: JobStatus.RUNNING,
+      },
+    });
+
     const result = await executeJob(codexJob);
     await updateDatabase(codexJob.id, result);
   },
   {
     connection: {
       host: "localhost",
-      port: 6397,
+      port: 6379,
     },
   },
 );
+
+worker.on("completed", (job) => {
+  console.log(`Job ${job.id} completed`);
+});
+
+worker.on("failed", (job, err) => {
+  console.error(`Job ${job?.id} failed`, err);
+});
