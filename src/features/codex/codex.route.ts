@@ -1,18 +1,29 @@
 import { Router } from "express";
 
-import { codexJobSchema } from "./codex.types.js";
-import { queueCodeExJob } from "./codex.controller.js";
+import { codexGetSubmissionSchema, codexJobSchema } from "./codex.types.js";
 import { asyncHandler } from "../../middlewares/async.js";
-import { validateBody } from "../../middlewares/validate.js";
+import { validateBody, validateParams } from "../../middlewares/validate.js";
 import { authenticateUser } from "../../middlewares/auth.js";
+import {
+  getAllUserSubmissions,
+  getSubmissionResult,
+  queueCodeExJob,
+} from "./codex.controller.js";
 
 export const codexRouter: Router = Router();
 
-// TODO
-codexRouter.get("/submission", authenticateUser, () => {});
+codexRouter.get(
+  "/:userId/submissions",
+  authenticateUser,
+  getAllUserSubmissions,
+);
 
-// TODO
-codexRouter.get("/submission/:id", authenticateUser, () => {});
+codexRouter.get(
+  "/submission/:id",
+  authenticateUser,
+  validateParams(codexGetSubmissionSchema),
+  getSubmissionResult,
+);
 
 codexRouter.post(
   "/execute",

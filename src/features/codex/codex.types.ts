@@ -6,4 +6,9 @@ export const codexJobSchema = z.object({
   language: z.enum(["C", "CPP", "JAVA", "PYTHON"]),
 });
 
+export const codexGetSubmissionSchema = z.object({
+  id: z.string(),
+});
+
 export type CodexJob = z.infer<typeof codexJobSchema>;
+export type CodexGetSubmission = z.infer<typeof codexGetSubmissionSchema>;
